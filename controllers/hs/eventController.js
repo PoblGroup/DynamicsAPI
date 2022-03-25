@@ -103,6 +103,7 @@ const createEvent = async (req, res) => {
   const eventData = req.body;
   const token = req.headers["authorization"].split(" ")[1];
 
+  // Setting option set values
   switch (eventData.caseType) {
     case "Accident":
       eventData.caseType = "771570000";

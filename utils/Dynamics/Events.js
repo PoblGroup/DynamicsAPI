@@ -61,9 +61,16 @@ async function CreateEvent(token, eventData) {
     pobl_eventdateandtime: eventData.eventDate,
     "pobl_LocationoftheIncident@odata.bind":
       "/pobl_teams(" + eventData.locationId + ")",
+    "pobl_EmployeeId@odata.bind":
+      "/pobl_employeehses(" + eventData.employeeId + ")",
+    "pobl_RegardingJobRoleId@odata.bind":
+      "/pobl_jobroles(" + eventData.jobRoleId + ")",
     pobl_exactlocationinfo: eventData.exactLocation,
     pobl_casetype: eventData.caseType,
+    pobl_actiontype: "771570000",
   });
+
+  console.log(JSON.parse(data));
 
   var config = {
     method: "post",

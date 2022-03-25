@@ -3,7 +3,6 @@ import { GetEmployeeByEmail } from "../../utils/Dynamics/Employee.js";
 import { GetEmployeeJobRoles } from "../../utils/Dynamics/JobRoles.js";
 
 const getEmployeeByEmail = async (req, res) => {
-  const employeeId = req.query.empId;
   const email = req.params.email;
   const token = req.headers["authorization"].split(" ")[1];
   let employeeRoles = [];
@@ -16,7 +15,10 @@ const getEmployeeByEmail = async (req, res) => {
     }
 
     // Fetch Employee Job Roles
-    const roles = await GetEmployeeJobRoles(token, employeeId);
+    const roles = await GetEmployeeJobRoles(
+      token,
+      employee.value[0].pobl_employeehsid
+    );
 
     try {
       if (roles.value.length > 0) {
