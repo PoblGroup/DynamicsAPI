@@ -68,6 +68,24 @@ async function CreateEvent(token, eventData) {
     pobl_exactlocationinfo: eventData.exactLocation,
     pobl_casetype: eventData.caseType,
     pobl_actiontype: "771570000",
+    "pobl_AffectedPersonEmployee@odata.bind":
+      eventData.caseType === "771570000"
+        ? "/pobl_employeehses(" + eventData.affectedPerson + ")"
+        : "",
+    pobl_affectedpersonnotes:
+      eventData.caseType === "771570000" ? eventData.affectedPersonNotes : "",
+    "pobl_AccidentCategory@odata.bind":
+      eventData.caseType === "771570000"
+        ? "/pobl_accidentcategories(" + eventData.category + ")"
+        : "",
+    "pobl_AccidentInjurySustained@odata.bind":
+      eventData.caseType === "771570000"
+        ? "/pobl_injurysustaineds(" + eventData.injury + ")"
+        : "",
+    "pobl_AccidentInjuredPart@odata.bind":
+      eventData.caseType === "771570000"
+        ? "/pobl_injuredparts(" + eventData.injuryPart + ")"
+        : "",
   });
 
   console.log(JSON.parse(data));
@@ -96,4 +114,84 @@ async function CreateEvent(token, eventData) {
   return JSON.parse(createdEvent);
 }
 
-export { GetEvents, GetEventById, CreateEvent };
+// Accident Lookups
+async function GetAccidentCategories(token) {
+  let categories = null;
+
+  var config = {
+    method: "get",
+    url: "https://stephen.api.crm11.dynamics.com/api/data/v9.2/pobl_accidentcategories",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  };
+
+  await axios(config)
+    .then(function (response) {
+      categories = JSON.stringify(response.data);
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+
+  return JSON.parse(categories);
+}
+
+async function GetAccidentInjuries(token) {
+  let injuries = null;
+
+  var config = {
+    method: "get",
+    url: "https://stephen.api.crm11.dynamics.com/api/data/v9.2/pobl_injurysustaineds",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  };
+
+  await axios(config)
+    .then(function (response) {
+      injuries = JSON.stringify(response.data);
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+
+  return JSON.parse(injuries);
+}
+
+async function GetAccidentInjuryParts(token) {
+  let injuryParts = null;
+
+  var config = {
+    method: "get",
+    url: "https://stephen.api.crm11.dynamics.com/api/data/v9.2/pobl_injuredparts",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  };
+
+  await axios(config)
+    .then(function (response) {
+      injuryParts = JSON.stringify(response.data);
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+
+  return JSON.parse(injuryParts);
+}
+
+export {
+  GetEvents,
+  GetEventById,
+  CreateEvent,
+  GetAccidentCategories,
+  GetAccidentInjuries,
+  GetAccidentInjuryParts,
+};

@@ -1,11 +1,15 @@
 "use strict";
 
+import { GetEmployees } from "../../utils/Dynamics/Employee.js";
 import {
   GetEventById,
   GetEvents,
   CreateEvent,
+  GetAccidentCategories,
+  GetAccidentInjuries,
+  GetAccidentInjuryParts,
 } from "../../utils/Dynamics/Events.js";
-import { GetTeams } from "../../utils/Dynamics/Teams.js";
+import { GetTeam, GetTeams } from "../../utils/Dynamics/Teams.js";
 
 const getEvents = async (req, res) => {
   const employeeId = req.query.employeeId;
@@ -51,31 +55,54 @@ const getEventById = async (req, res) => {
   const token = req.headers["authorization"].split(" ")[1];
 
   try {
-    const event = await GetEventById(token, id);
+    const dynamicsEvent = await GetEventById(token, id);
 
-    if (event == null) {
+    if (dynamicsEvent == null) {
       res.status(401).send("Event not found");
     }
 
-    switch (event.pobl_casetype) {
+    switch (dynamicsEvent.pobl_casetype) {
       case 771570000:
-        event.pobl_casetype = "Accident";
+        dynamicsEvent.pobl_casetype = "Accident";
         break;
       case 771570001:
-        event.pobl_casetype = "Incident";
+        dynamicsEvent.pobl_casetype = "Incident";
         break;
       case 771570002:
-        event.pobl_casetype = "Near Miss";
+        dynamicsEvent.pobl_casetype = "Near Miss";
         break;
       default:
         break;
     }
 
-    (event.pobl_description =
-      event.pobl_description == null
-        ? "No description provided.."
-        : event.pobl_description),
+    try {
+      const event = {
+        id: dynamicsEvent.pobl_eventid,
+        name: dynamicsEvent.pobl_casename,
+        ref: dynamicsEvent.pobl_caseref,
+        date: dynamicsEvent.pobl_eventdateandtime,
+        caseType: dynamicsEvent.pobl_casetype,
+        actionType: dynamicsEvent.pobl_actiontype,
+        exactLocation: dynamicsEvent.pobl_exactlocationinfo,
+        description:
+          dynamicsEvent.pobl_description == null
+            ? "No Description"
+            : dynamicsEvent.pobl_description,
+        impactscolleagues: dynamicsEvent.pobl_impactscolleagues,
+        impactsexternalpeople: dynamicsEvent.pobl_impactsexternalpeople,
+      };
+
+      const locationData = await GetTeam(
+        token,
+        dynamicsEvent._pobl_locationoftheincident_value
+      );
+
+      event.location = locationData.pobl_teamname;
+
       res.status(200).json(event);
+    } catch (error) {
+      console.log("Error");
+    }
   } catch (error) {
     res.status(500).send();
   }
@@ -126,4 +153,26 @@ const createEvent = async (req, res) => {
   }
 };
 
-export { getEvents, getEventById, getEventTeams, createEvent };
+const getLookups = async (req, res) => {
+  const token = req.headers["authorization"].split(" ")[1];
+
+  try {
+    const employees = await GetEmployees(token);
+    const categories = await GetAccidentCategories(token);
+    const injuries = await GetAccidentInjuries(token);
+    const injuryParts = await GetAccidentInjuryParts(token);
+
+    const lookups = {
+      employees,
+      categories,
+      injuries,
+      injuryParts,
+    };
+
+    res.status(200).json(lookups);
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
+export { getEvents, getEventById, getEventTeams, createEvent, getLookups };

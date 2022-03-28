@@ -25,4 +25,29 @@ async function GetEmployeeByEmail(token, email) {
   return JSON.parse(employee);
 }
 
-export { GetEmployeeByEmail };
+async function GetEmployees(token) {
+  let employees = null;
+
+  var config = {
+    method: "get",
+    url: `https://stephen.api.crm11.dynamics.com/api/data/v9.2/pobl_employeehses`,
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  };
+
+  await axios(config)
+    .then(function (response) {
+      //   console.log(JSON.stringify(response.data));
+      employees = JSON.stringify(response.data);
+    })
+    .catch(function (error) {
+      employees = JSON.stringify({ error: error.message });
+    });
+
+  return JSON.parse(employees);
+}
+
+export { GetEmployeeByEmail, GetEmployees };
