@@ -88,8 +88,6 @@ async function CreateEvent(token, eventData) {
         : "",
   });
 
-  console.log(JSON.parse(data));
-
   var config = {
     method: "post",
     url: "https://stephen.api.crm11.dynamics.com/api/data/v9.2/pobl_events",
