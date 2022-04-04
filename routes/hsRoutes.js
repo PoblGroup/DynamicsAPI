@@ -8,6 +8,7 @@ import {
 } from "../controllers/hs/eventController.js";
 import { getEmployeeByEmail } from "../controllers/hs/employeeController.js";
 import {
+  confirmPolicyResponse,
   getpolicyDocumentFiles,
   getPolicyResponseById,
   getPolicyResponses,
@@ -27,7 +28,10 @@ router.route("/employees/:email").get(getEmployeeByEmail).put();
 
 // POLICY RESPONSES
 router.route("/policyresponses").get(getPolicyResponses).post();
-router.route("/policyresponses/:id").get(getPolicyResponseById).post();
+router
+  .route("/policyresponses/:id")
+  .get(getPolicyResponseById)
+  .patch(confirmPolicyResponse);
 router.route("/policydocument/files").get(getpolicyDocumentFiles);
 
 export default router;

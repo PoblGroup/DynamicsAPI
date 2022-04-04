@@ -5,6 +5,7 @@ import {
   GetPolicyDocumentSharePointLocation,
   GetPolicyResponseById,
   GetPolicyResponses,
+  updatePolicyResponse,
 } from "../../utils/Dynamics/Policies.js";
 
 const getPolicyResponses = async (req, res) => {
@@ -77,7 +78,6 @@ const getPolicyResponseById = async (req, res) => {
     );
 
     if (spLocation != null) {
-      console.log(spLocation);
       files = await GetPolicyDocumentFiles(spLocation);
     }
 
@@ -104,4 +104,26 @@ const getpolicyDocumentFiles = async (req, res) => {
   res.json(files);
 };
 
-export { getPolicyResponses, getPolicyResponseById, getpolicyDocumentFiles };
+const confirmPolicyResponse = async (req, res) => {
+  const id = req.params.id;
+  const token = req.headers["authorization"].split(" ")[1];
+
+  try {
+    const updatedPolicyResponse = await updatePolicyResponse(token, id);
+
+    if (updatedPolicyResponse == true) {
+      res.status(200).json({ message: `Policy Response Updated, Id: ${id}` });
+    } else {
+      res.status(500).json({ error: `Something went wrong` });
+    }
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
+export {
+  getPolicyResponses,
+  getPolicyResponseById,
+  getpolicyDocumentFiles,
+  confirmPolicyResponse,
+};

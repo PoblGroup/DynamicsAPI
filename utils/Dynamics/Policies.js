@@ -181,6 +181,34 @@ async function GetPolicyDocumentFiles(folder) {
   return files;
 }
 
+async function updatePolicyResponse(token, id) {
+  let updatedResponse = false;
+
+  var data = JSON.stringify({
+    pobl_responsesigned: true,
+  });
+
+  var config = {
+    method: "patch",
+    url: `https://stephen.api.crm11.dynamics.com/api/data/v9.2/pobl_policydocumentresponses(${id})`,
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+    data: data,
+  };
+
+  await axios(config)
+    .then(function (response) {
+      updatedResponse = response.status == 204 ? true : false;
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+
+  return updatedResponse;
+}
+
 export {
   GetPolicyResponses,
   GetPolicyResponseById,
@@ -188,4 +216,5 @@ export {
   GetPolicyDocumentById,
   GetPolicyDocumentSharePointLocation,
   GetPolicyDocumentFiles,
+  updatePolicyResponse,
 };
