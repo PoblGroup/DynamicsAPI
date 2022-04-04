@@ -4,7 +4,7 @@ async function GetTeams(token) {
   let teams = null;
   var config = {
     method: "get",
-    url: "https://stephen.api.crm11.dynamics.com/api/data/v9.2/pobl_teams",
+    url: `https://${process.env.DYNAMICS_ENV}.api.crm11.dynamics.com/api/data/v9.2/pobl_teams`,
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
@@ -26,7 +26,7 @@ async function GetTeam(token, id) {
   let team = null;
   var config = {
     method: "get",
-    url: `https://stephen.api.crm11.dynamics.com/api/data/v9.2/pobl_teams(${id})`,
+    url: `https://${process.env.DYNAMICS_ENV}.api.crm11.dynamics.com/api/data/v9.2/pobl_teams(${id})`,
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",

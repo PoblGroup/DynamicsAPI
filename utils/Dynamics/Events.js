@@ -6,8 +6,8 @@ async function GetEvents(token, employeeId) {
 
   var config = {
     method: "get",
-    // url: "https://stephen.api.crm11.dynamics.com/api/data/v9.2/pobl_events",
-    url: `https://stephen.api.crm11.dynamics.com/api/data/v9.2/pobl_events?$filter=_pobl_employeeid_value eq '${employeeId}'`, // Get Event for Employee
+    // url: "https://${process.env.DYNAMICS_ENV}.api.crm11.dynamics.com/api/data/v9.2/pobl_events",
+    url: `https://${process.env.DYNAMICS_ENV}.api.crm11.dynamics.com/api/data/v9.2/pobl_events?$filter=_pobl_employeeid_value eq '${employeeId}'`, // Get Event for Employee
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
@@ -32,7 +32,7 @@ async function GetEventById(token, id) {
 
   var config = {
     method: "get",
-    url: `https://stephen.api.crm11.dynamics.com/api/data/v9.2/pobl_events(${id})`,
+    url: `https://${process.env.DYNAMICS_ENV}.api.crm11.dynamics.com/api/data/v9.2/pobl_events(${id})`,
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
@@ -90,7 +90,7 @@ async function CreateEvent(token, eventData) {
 
   var config = {
     method: "post",
-    url: "https://stephen.api.crm11.dynamics.com/api/data/v9.2/pobl_events",
+    url: `https://${process.env.DYNAMICS_ENV}.api.crm11.dynamics.com/api/data/v9.2/pobl_events`,
     headers: {
       Authorization: `Bearer ${token}`,
       "Content-Type": "application/json",
@@ -118,7 +118,7 @@ async function GetAccidentCategories(token) {
 
   var config = {
     method: "get",
-    url: "https://stephen.api.crm11.dynamics.com/api/data/v9.2/pobl_accidentcategories",
+    url: `https://${process.env.DYNAMICS_ENV}.api.crm11.dynamics.com/api/data/v9.2/pobl_accidentcategories`,
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
@@ -142,7 +142,7 @@ async function GetAccidentInjuries(token) {
 
   var config = {
     method: "get",
-    url: "https://stephen.api.crm11.dynamics.com/api/data/v9.2/pobl_injurysustaineds",
+    url: `https://${process.env.DYNAMICS_ENV}.api.crm11.dynamics.com/api/data/v9.2/pobl_injurysustaineds`,
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
@@ -166,7 +166,7 @@ async function GetAccidentInjuryParts(token) {
 
   var config = {
     method: "get",
-    url: "https://stephen.api.crm11.dynamics.com/api/data/v9.2/pobl_injuredparts",
+    url: `https://${process.env.DYNAMICS_ENV}.api.crm11.dynamics.com/api/data/v9.2/pobl_injuredparts`,
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",

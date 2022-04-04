@@ -9,7 +9,7 @@ async function GetDynamicsToken() {
     client_id: "d2a32ae6-e85e-4b62-91a1-538062cdee0e",
     client_secret: "qgV7Q~qNJFK_jdmnWkIrFRCToSAS4fAiNpeRi",
     grant_type: "client_credentials",
-    resource: "https://stephen.crm11.dynamics.com",
+    resource: `https://${process.env.DYNAMICS_ENV}.crm11.dynamics.com`,
   });
   var config = {
     method: "get",

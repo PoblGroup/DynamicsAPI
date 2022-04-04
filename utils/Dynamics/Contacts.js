@@ -6,7 +6,7 @@ async function GetDyamicsContacts(token) {
 
   var config = {
     method: "get",
-    url: "https://stephen.api.crm11.dynamics.com/api/data/v9.2/contacts",
+    url: `https://${process.env.DYNAMICS_ENV}.api.crm11.dynamics.com/api/data/v9.2/contacts`,
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
@@ -31,7 +31,7 @@ async function GetDyamicsContactById(token, id) {
 
   var config = {
     method: "get",
-    url: `https://stephen.api.crm11.dynamics.com/api/data/v9.2/contacts(${id})`,
+    url: `https://${process.env.DYNAMICS_ENV}.api.crm11.dynamics.com/api/data/v9.2/contacts(${id})`,
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",

@@ -5,8 +5,7 @@ async function GetPolicyResponses(token, employeeId) {
 
   var config = {
     method: "get",
-    // url: "https://stephen.api.crm11.dynamics.com/api/data/v9.2/pobl_policydocumentresponses",
-    url: `https://stephen.api.crm11.dynamics.com/api/data/v9.2/pobl_policydocumentresponses?$filter=_pobl_responseemployeeid_value eq '${employeeId}' and pobl_responsesigned eq false`,
+    url: `https://${process.env.DYNAMICS_ENV}.api.crm11.dynamics.com/api/data/v9.2/pobl_policydocumentresponses?$filter=_pobl_responseemployeeid_value eq '${employeeId}' and pobl_responsesigned eq false`,
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
@@ -30,7 +29,7 @@ async function GetPolicyResponseById(token, id) {
 
   var config = {
     method: "get",
-    url: `https://stephen.api.crm11.dynamics.com/api/data/v9.2/pobl_policydocumentresponses(${id})`,
+    url: `https://${process.env.DYNAMICS_ENV}.api.crm11.dynamics.com/api/data/v9.2/pobl_policydocumentresponses(${id})`,
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
@@ -53,8 +52,7 @@ async function GetPolicyDocuments(token, id) {
   let documents = null;
   var config = {
     method: "get",
-    url: "https://stephen.api.crm11.dynamics.com/api/data/v9.2/pobl_policydocuments",
-    // url: `https://stephen.api.crm11.dynamics.com/api/data/v9.2/pobl_policydocuments?$filter=pobl_policydocumentid eq '${id}'`,
+    url: `https://${process.env.DYNAMICS_ENV}.api.crm11.dynamics.com/api/data/v9.2/pobl_policydocuments`,
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
@@ -75,7 +73,7 @@ async function GetPolicyDocumentById(token, id) {
   let document = null;
   var config = {
     method: "get",
-    url: `https://stephen.api.crm11.dynamics.com/api/data/v9.2/pobl_policydocuments(${id})`,
+    url: `https://${process.env.DYNAMICS_ENV}.api.crm11.dynamics.com/api/data/v9.2/pobl_policydocuments(${id})`,
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
@@ -126,7 +124,7 @@ async function GetPolicyDocumentSharePointLocation(token, policyDocumentId) {
 
   var config = {
     method: "get",
-    url: `https://stephen.api.crm11.dynamics.com/api/data/v9.2/sharepointdocumentlocations?$filter=_regardingobjectid_value eq '${policyDocumentId}'`,
+    url: `https://${process.env.DYNAMICS_ENV}.api.crm11.dynamics.com/api/data/v9.2/sharepointdocumentlocations?$filter=_regardingobjectid_value eq '${policyDocumentId}'`,
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -149,7 +147,7 @@ async function GetPolicyDocumentSharePointLocation(token, policyDocumentId) {
 }
 
 async function GetPolicyDocumentFiles(folder) {
-  const site = "https://pobl.sharepoint.com/sites/PDyn_Dev";
+  const site = `https://pobl.sharepoint.com/sites/${process.env.SP_SITE}`;
   var files = [];
   var data = JSON.stringify({
     site: site,
@@ -190,7 +188,7 @@ async function updatePolicyResponse(token, id) {
 
   var config = {
     method: "patch",
-    url: `https://stephen.api.crm11.dynamics.com/api/data/v9.2/pobl_policydocumentresponses(${id})`,
+    url: `https://${process.env.DYNAMICS_ENV}.api.crm11.dynamics.com/api/data/v9.2/pobl_policydocumentresponses(${id})`,
     headers: {
       Authorization: `Bearer ${token}`,
       "Content-Type": "application/json",
