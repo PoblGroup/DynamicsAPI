@@ -6,6 +6,7 @@ import cors from "cors";
 import contactRoutes from "./routes/contactRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import hsRoutes from "./routes/hsRoutes.js";
+import spRoutes from "./routes/spRoutes.js";
 
 const router = express.Router();
 
@@ -28,6 +29,7 @@ router.get("/", function (req, res) {
 app.use("/api/auth", authRoutes);
 app.use("/api/contacts", contactRoutes);
 app.use("/api/hs", hsRoutes);
+app.use("/api/sp", spRoutes);
 
 const PORT = process.env.PORT || 5000;
 

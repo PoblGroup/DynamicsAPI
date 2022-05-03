@@ -32,7 +32,7 @@ const getEmployeeByEmail = async (req, res) => {
           employeeRoles.push(r);
         });
       } else {
-        employeeRoles.push({ message: "Not Job Roles Found" });
+        employeeRoles.push({ message: "No Job Roles Found" });
       }
     } catch (error) {
       console.log("ERROR", error);

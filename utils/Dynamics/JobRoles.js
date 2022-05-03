@@ -27,4 +27,28 @@ async function GetEmployeeJobRoles(token, id) {
   return JSON.parse(roles);
 }
 
-export { GetEmployeeJobRoles };
+async function GetJobRolesByManager(token, managerId) {
+  let jobRoles = null;
+
+  var config = {
+    method: "get",
+    url: `https://${process.env.DYNAMICS_ENV}.api.crm11.dynamics.com/api/data/v9.2/pobl_jobroles?$filter=_pobl_jobrolereportstoid_value eq '${managerId}'`,
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  };
+
+  await axios(config)
+    .then(function (response) {
+      jobRoles = JSON.stringify({ data: response.data.value });
+    })
+    .catch(function (error) {
+      jobRoles = JSON.stringify({ error: error });
+    });
+
+  return JSON.parse(jobRoles);
+}
+
+export { GetEmployeeJobRoles, GetJobRolesByManager };

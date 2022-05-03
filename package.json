@@ -14,11 +14,18 @@
     "axios": "^0.24.0",
     "cors": "^2.8.5",
     "express": "^4.17.1",
-    "node-fetch": "^3.1.0",
-    "qs": "^6.10.1"
+    "form-data": "^4.0.0",
+    "gd-sprest": "^6.9.3",
+    "multer": "^1.4.4",
+    "node-fetch": "^3.2.3",
+    "node-sp-auth": "^3.0.4",
+    "qs": "^6.10.1",
+    "request-promise": "^4.2.6",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "dotenv": "^10.0.0",
-    "nodemon": "^2.0.15"
+    "nodemon": "^2.0.15",
+    "spsave": "^4.0.2"
   }
 }

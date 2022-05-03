@@ -1,6 +1,9 @@
 "use strict";
 
-import { GetEmployees } from "../../utils/Dynamics/Employee.js";
+import {
+  GetEmployeeById,
+  GetEmployees,
+} from "../../utils/Dynamics/Employee.js";
 import {
   GetEventById,
   GetEvents,
@@ -8,7 +11,9 @@ import {
   GetAccidentCategories,
   GetAccidentInjuries,
   GetAccidentInjuryParts,
+  UpdateEvent,
 } from "../../utils/Dynamics/Events.js";
+import { GetJobRolesByManager } from "../../utils/Dynamics/JobRoles.js";
 import { GetTeam, GetTeams } from "../../utils/Dynamics/Teams.js";
 
 const getEvents = async (req, res) => {
@@ -90,6 +95,13 @@ const getEventById = async (req, res) => {
             : dynamicsEvent.pobl_description,
         impactscolleagues: dynamicsEvent.pobl_impactscolleagues,
         impactsexternalpeople: dynamicsEvent.pobl_impactsexternalpeople,
+        investigationDate: dynamicsEvent.pobl_investigationdatetime,
+        investigationFindings: dynamicsEvent.pobl_investigationfindings,
+        investigationOutcome:
+          dynamicsEvent.pobl_investigationoutcome == "771570001"
+            ? "Passed to Health & Safety"
+            : "Resolved",
+        resolutionOutcome: dynamicsEvent.pobl_resolutionoutcome,
       };
 
       const locationData = await GetTeam(
@@ -175,4 +187,101 @@ const getLookups = async (req, res) => {
   }
 };
 
-export { getEvents, getEventById, getEventTeams, createEvent, getLookups };
+const getTeamEvents = async (req, res) => {
+  const managerId = req.query.managerId;
+  const token = req.headers["authorization"].split(" ")[1];
+  let managerTeam = null;
+
+  if (managerId) {
+    try {
+      const { data, error } = await GetJobRolesByManager(token, managerId);
+
+      if (error)
+        return res.status(error.status).json({ message: error.message });
+
+      if (data.length > 0) {
+        let members = await GetTeamMembers(token, data);
+        managerTeam = members;
+      }
+      res.status(200).json(managerTeam);
+    } catch (error) {
+      res.status(400).send(error);
+    }
+  }
+};
+
+async function GetTeamMembers(token, roles) {
+  let members = [];
+  const promises = roles.map(async (role) => {
+    // Role Title
+    let memberRole = role.pobl_jobroletitle;
+    // Employee
+    let employee = await GetEmployeeById(
+      token,
+      role._pobl_jobroleemployeeid_value
+    );
+    let employeeName = employee.data.pobl_employeename;
+    // Events
+    let empEvents = await GetEvents(token, employee.data.pobl_employeehsid);
+    empEvents.value.map((event) => {
+      switch (event.pobl_casetype) {
+        case 771570000:
+          event.pobl_casetype = "Accident";
+          break;
+        case 771570001:
+          event.pobl_casetype = "Incident";
+          break;
+        case 771570002:
+          event.pobl_casetype = "Near Miss";
+          break;
+        default:
+          break;
+      }
+      switch (event.pobl_actiontype) {
+        case 771570000:
+          event.pobl_actiontype = "Manager";
+          break;
+        case 771570001:
+          event.pobl_actiontype = "Health and Safety";
+          break;
+        default:
+          break;
+      }
+    });
+    let events = empEvents.value;
+
+    let member = { memberRole, employeeName, events };
+    return member;
+  });
+  return Promise.all(promises);
+}
+
+const updateEvent = async (req, res) => {
+  const newCase = {
+    eventFindings: req.body.eventFindings,
+    investigationDate: req.body.investigationDate,
+    outcome: req.body.outcome,
+    id: req.params.id,
+  };
+  const token = req.headers["authorization"].split(" ")[1];
+
+  const updated = await UpdateEvent(token, newCase);
+
+  if (!updated)
+    return res.status(500).json({ message: "Something went wrong" });
+
+  res.status(200).json({
+    updated: true,
+    message: `Successfully updated case!`,
+  });
+};
+
+export {
+  getEvents,
+  getEventById,
+  getEventTeams,
+  createEvent,
+  getLookups,
+  getTeamEvents,
+  updateEvent,
+};

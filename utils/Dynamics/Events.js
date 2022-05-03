@@ -112,6 +112,47 @@ async function CreateEvent(token, eventData) {
   return JSON.parse(createdEvent);
 }
 
+async function UpdateEvent(token, eventData) {
+  var updated = false;
+
+  var data = {
+    pobl_investigationfindings: eventData.eventFindings,
+    pobl_investigationdatetime: eventData.investigationDate,
+  };
+
+  if (eventData.outcome != null) data.pobl_investigationcompleted = new Date();
+  if (eventData.outcome == "HS") {
+    data.pobl_investigationoutcome = "771570001";
+    data.pobl_actiontype = "771570001";
+  }
+  if (eventData.outcome == "Resolve") {
+    data.pobl_investigationoutcome = "771570000";
+    data.pobl_resolutionoutcome = "771570000";
+  }
+
+  console.log("Data Sent", data);
+
+  var config = {
+    method: "patch",
+    url: `https://${process.env.DYNAMICS_ENV}.api.crm11.dynamics.com/api/data/v9.2/pobl_events(${eventData.id})`,
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+    data: JSON.stringify(data),
+  };
+
+  await axios(config)
+    .then(function (response) {
+      if (response.status == 204) updated = true;
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+
+  return updated;
+}
+
 // Accident Lookups
 async function GetAccidentCategories(token) {
   let categories = null;
@@ -192,4 +233,5 @@ export {
   GetAccidentCategories,
   GetAccidentInjuries,
   GetAccidentInjuryParts,
+  UpdateEvent,
 };

@@ -25,6 +25,32 @@ async function GetEmployeeByEmail(token, email) {
   return JSON.parse(employee);
 }
 
+async function GetEmployeeById(token, id) {
+  let employee = null;
+
+  var config = {
+    method: "get",
+    url: `https://${process.env.DYNAMICS_ENV}.api.crm11.dynamics.com/api/data/v9.2/pobl_employeehses(${id})`,
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  };
+
+  await axios(config)
+    .then(function (response) {
+      // console.log(JSON.stringify(response.data));
+      employee = JSON.stringify({ data: response.data });
+    })
+    .catch(function (error) {
+      employee = JSON.stringify({ error: error });
+      // console.log(`Error ${error}`);
+    });
+
+  return JSON.parse(employee);
+}
+
 async function GetEmployees(token) {
   let employees = null;
 
@@ -50,4 +76,4 @@ async function GetEmployees(token) {
   return JSON.parse(employees);
 }
 
-export { GetEmployeeByEmail, GetEmployees };
+export { GetEmployeeByEmail, GetEmployeeById, GetEmployees };

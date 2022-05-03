@@ -157,7 +157,8 @@ async function GetPolicyDocumentFiles(folder) {
 
   var config = {
     method: "post",
-    url: "https://prod-10.uksouth.logic.azure.com:443/workflows/98c2fcfdb2384cefa07951992f7fe174/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=1c2T8VMC9l2bxq3KIOHcH1F9mGCxkzKv9FJ7pytAAQs",
+    //url: "https://prod-10.uksouth.logic.azure.com:443/workflows/98c2fcfdb2384cefa07951992f7fe174/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=1c2T8VMC9l2bxq3KIOHcH1F9mGCxkzKv9FJ7pytAAQs",
+    url: "https://prod-31.uksouth.logic.azure.com:443/workflows/2f438c39437249198c571a855997ef7d/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=Hp8CrBCLgkrERHUlUjos7m8KybF2TQ_7Qb5l2iMck3g",
     headers: {
       "Content-Type": "application/json",
     },
