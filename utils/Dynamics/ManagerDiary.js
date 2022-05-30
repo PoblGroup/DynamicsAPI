@@ -52,8 +52,6 @@ export async function UpdateManagerEntry(token, entry) {
   var updated = false;
   var data = null;
 
-  console.log(entry);
-
   if (entry.completion === "true") {
     data = {
       pobl_diarycompletenotes: entry.completionNotes,

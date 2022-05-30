@@ -53,6 +53,13 @@ const getDiaryEntryById = async (req, res) => {
       });
     }
 
+    if (!entry._pobl_diaryhsetaskid_value)
+      return res
+        .status(404)
+        .json({
+          error: `No Diary Task Found. Please report issue to service desk.`,
+        });
+
     const document = await GetManagerDiaryTask(
       token,
       entry._pobl_diaryhsetaskid_value
@@ -67,7 +74,7 @@ const getDiaryEntryById = async (req, res) => {
       files = await GetManagerDiaryTaskFiles(spLocation);
     }
 
-    // Set entry data
+    //Set entry data
     let diaryEntry = {
       id: entry.pobl_managerdiaryentryid,
       name: entry.pobl_diarytaskname,

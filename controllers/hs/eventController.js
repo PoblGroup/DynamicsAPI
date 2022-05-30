@@ -12,6 +12,8 @@ import {
   GetAccidentInjuries,
   GetAccidentInjuryParts,
   UpdateEvent,
+  GetWitnessTypes,
+  GetEmergencyServices,
 } from "../../utils/Dynamics/Events.js";
 import { GetJobRolesByManager } from "../../utils/Dynamics/JobRoles.js";
 import { GetTeam, GetTeams } from "../../utils/Dynamics/Teams.js";
@@ -102,6 +104,12 @@ const getEventById = async (req, res) => {
             ? "Passed to Health & Safety"
             : "Resolved",
         resolutionOutcome: dynamicsEvent.pobl_resolutionoutcome,
+        witnessType: dynamicsEvent.pobl_witnesstype,
+        witness: dynamicsEvent.pobl_witness,
+        emergencyService: dynamicsEvent.pobl_emergencyservice,
+        emergencyServiceDetails: dynamicsEvent.pobl_emergencyservicedetails,
+        employeeTimeOff: dynamicsEvent.pobl_employeetimeoff,
+        riskAssessentFollowed: dynamicsEvent.pobl_riskassessmentfollowed,
       };
 
       const locationData = await GetTeam(
@@ -173,12 +181,16 @@ const getLookups = async (req, res) => {
     const categories = await GetAccidentCategories(token);
     const injuries = await GetAccidentInjuries(token);
     const injuryParts = await GetAccidentInjuryParts(token);
+    const witnessTypes = await GetWitnessTypes(token);
+    const emergencyServices = await GetEmergencyServices(token);
 
     const lookups = {
       employees,
       categories,
       injuries,
       injuryParts,
+      witnessTypes,
+      emergencyServices,
     };
 
     res.status(200).json(lookups);
@@ -257,15 +269,16 @@ async function GetTeamMembers(token, roles) {
 }
 
 const updateEvent = async (req, res) => {
-  const newCase = {
-    eventFindings: req.body.eventFindings,
-    investigationDate: req.body.investigationDate,
-    outcome: req.body.outcome,
-    id: req.params.id,
-  };
+  // console.log(req.body);
+  // const newCase = {
+  //   eventFindings: req.body.eventFindings,
+  //   investigationDate: req.body.investigationDate,
+  //   outcome: req.body.outcome,
+  //   id: req.params.id,
+  // };
   const token = req.headers["authorization"].split(" ")[1];
 
-  const updated = await UpdateEvent(token, newCase);
+  const updated = await UpdateEvent(token, req.body);
 
   if (!updated)
     return res.status(500).json({ message: "Something went wrong" });

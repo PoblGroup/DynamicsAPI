@@ -1,5 +1,6 @@
 import axios from "axios";
 import qs from "qs";
+import { GetEmployeeById } from "../Dynamics/Employee.js";
 
 async function GetEvents(token, employeeId) {
   let events = null;
@@ -112,29 +113,44 @@ async function CreateEvent(token, eventData) {
   return JSON.parse(createdEvent);
 }
 
-async function UpdateEvent(token, eventData) {
+async function UpdateEvent(token, investigationData) {
   var updated = false;
 
+  if (investigationData.witnessType === "771570001") {
+    // Get Employee
+    const employee = await GetEmployeeById(token, investigationData.witness);
+    investigationData.witness = employee.data.pobl_employeename;
+  }
+
   var data = {
-    pobl_investigationfindings: eventData.eventFindings,
-    pobl_investigationdatetime: eventData.investigationDate,
+    pobl_investigationfindings: investigationData.eventFindings,
+    pobl_investigationdatetime: investigationData.investigationDate,
+    pobl_witnesstype: investigationData.witnessType,
+    pobl_witness: investigationData.witness,
+    pobl_emergencyservice:
+      investigationData.emergencyService === ""
+        ? null
+        : investigationData.emergencyService,
+    pobl_emergencyservicedetails: investigationData.emergencyServiceDetails,
+    pobl_employeetimeoff: investigationData.employeeTimeOff,
+    pobl_riskassessmentfollowed: investigationData.riskAssessment,
+    pobl_investigationcompleted: new Date(),
   };
 
-  if (eventData.outcome != null) data.pobl_investigationcompleted = new Date();
-  if (eventData.outcome == "HS") {
+  if (
+    investigationData.employeeTimeOff === true ||
+    investigationData.riskAssessment === false
+  ) {
     data.pobl_investigationoutcome = "771570001";
     data.pobl_actiontype = "771570001";
-  }
-  if (eventData.outcome == "Resolve") {
+  } else {
     data.pobl_investigationoutcome = "771570000";
     data.pobl_resolutionoutcome = "771570000";
   }
 
-  console.log("Data Sent", data);
-
   var config = {
     method: "patch",
-    url: `https://${process.env.DYNAMICS_ENV}.api.crm11.dynamics.com/api/data/v9.2/pobl_events(${eventData.id})`,
+    url: `https://${process.env.DYNAMICS_ENV}.api.crm11.dynamics.com/api/data/v9.2/pobl_events(${investigationData.caseId})`,
     headers: {
       Authorization: `Bearer ${token}`,
       "Content-Type": "application/json",
@@ -226,12 +242,73 @@ async function GetAccidentInjuryParts(token) {
   return JSON.parse(injuryParts);
 }
 
+// Manager Investigation Lookups
+async function GetWitnessTypes(token) {
+  let witnessTypes = [];
+
+  var config = {
+    method: "get",
+    url: `https://${process.env.DYNAMICS_ENV}.api.crm11.dynamics.com/api/data/v9.2/GlobalOptionSetDefinitions(Name='pobl_witnesstype')`,
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  };
+
+  await axios(config)
+    .then(function (response) {
+      response.data.Options.map((o) => {
+        witnessTypes.push({
+          witnessTypeId: o.Value,
+          witnessTypeName: o.Label.LocalizedLabels[0].Label,
+        });
+      });
+    })
+    .catch(function (error) {
+      console.log(error.message);
+    });
+
+  return witnessTypes;
+}
+
+async function GetEmergencyServices(token) {
+  let emergencyServices = [];
+
+  var config = {
+    method: "get",
+    url: `https://${process.env.DYNAMICS_ENV}.api.crm11.dynamics.com/api/data/v9.2/GlobalOptionSetDefinitions(Name='pobl_emergencyservice')`,
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  };
+
+  await axios(config)
+    .then(function (response) {
+      response.data.Options.map((o) => {
+        emergencyServices.push({
+          emergencyServiceId: o.Value,
+          emergencyServiceName: o.Label.LocalizedLabels[0].Label,
+        });
+      });
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+
+  return emergencyServices;
+}
+
 export {
   GetEvents,
   GetEventById,
   CreateEvent,
+  UpdateEvent,
   GetAccidentCategories,
   GetAccidentInjuries,
   GetAccidentInjuryParts,
-  UpdateEvent,
+  GetWitnessTypes,
+  GetEmergencyServices,
 };
