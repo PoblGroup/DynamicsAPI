@@ -54,16 +54,34 @@ const getDiaryEntryById = async (req, res) => {
     }
 
     if (!entry._pobl_diaryhsetaskid_value)
-      return res
-        .status(404)
-        .json({
-          error: `No Diary Task Found. Please report issue to service desk.`,
-        });
+      return res.status(404).json({
+        error: `No Diary Task Found. Please report issue to service desk.`,
+      });
 
     const document = await GetManagerDiaryTask(
       token,
       entry._pobl_diaryhsetaskid_value
     );
+
+    if (document) {
+      switch (document.pobl_taskcategory) {
+        case 771570000:
+          document.pobl_taskcategory = "Briefing";
+          break;
+        case 771570001:
+          document.pobl_taskcategory = "Inspection";
+          break;
+        case 771570002:
+          document.pobl_taskcategory = "Review";
+          break;
+        case 771570003:
+          document.pobl_taskcategory = "Task";
+          break;
+        case 771570004:
+          document.pobl_taskcategory = "Custom";
+          break;
+      }
+    }
 
     const spLocation = await GetManagerDiaryTaskSharePointLocation(
       token,

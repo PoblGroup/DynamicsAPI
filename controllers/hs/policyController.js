@@ -17,7 +17,7 @@ const getPolicyResponses = async (req, res) => {
     const policyResponses = await GetPolicyResponses(token, employeeId);
 
     if (policyResponses.value.length == 0) {
-      return res.status(404).json({
+      return res.status(200).json({
         error: `No Policy Responses Found`,
       });
     }

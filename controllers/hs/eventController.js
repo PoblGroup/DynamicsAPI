@@ -48,6 +48,17 @@ const getEvents = async (req, res) => {
           default:
             break;
         }
+
+        switch (event.pobl_actiontype) {
+          case 771570000:
+            event.pobl_actiontype = "Manager";
+            break;
+          case 771570001:
+            event.pobl_actiontype = "Health & Safety";
+            break;
+          default:
+            break;
+        }
       });
 
       res.status(200).json(events);
@@ -77,6 +88,37 @@ const getEventById = async (req, res) => {
         break;
       case 771570002:
         dynamicsEvent.pobl_casetype = "Near Miss";
+        break;
+      default:
+        break;
+    }
+
+    switch (dynamicsEvent.pobl_witnesstype) {
+      case 771570000:
+        dynamicsEvent.pobl_witnesstype = "None";
+        break;
+      case 771570001:
+        dynamicsEvent.pobl_witnesstype = "Employee";
+        break;
+      case 771570002:
+        dynamicsEvent.pobl_witnesstype = "Customer";
+        break;
+      default:
+        break;
+    }
+
+    switch (dynamicsEvent.pobl_emergencyservice) {
+      case 771570000:
+        dynamicsEvent.pobl_emergencyservice = "Ambulance";
+        break;
+      case 771570001:
+        dynamicsEvent.pobl_emergencyservice = "Fire Service";
+        break;
+      case 771570002:
+        dynamicsEvent.pobl_emergencyservice = "Police";
+        break;
+      case 771570003:
+        dynamicsEvent.pobl_emergencyservice = "Coastguard";
         break;
       default:
         break;
