@@ -200,7 +200,7 @@ const createEvent = async (req, res) => {
     case "Incident":
       eventData.caseType = "771570001";
       break;
-    case "Near Miss":
+    case "NearMiss":
       eventData.caseType = "771570002";
       break;
     default:
