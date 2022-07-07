@@ -5,7 +5,7 @@ async function GetEmployeeByEmail(token, email) {
 
   var config = {
     method: "get",
-    url: `https://${process.env.DYNAMICS_ENV}.api.crm11.dynamics.com/api/data/v9.2/pobl_employeehses?$filter=pobl_employeeemail eq '${email}'`,
+    url: `https://${process.env.DYNAMICS_ENV}.api.crm11.dynamics.com/api/data/v9.2/pobl_employeehses?$filter=pobl_employeeemail eq '${email}' and statecode eq 0`,
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
